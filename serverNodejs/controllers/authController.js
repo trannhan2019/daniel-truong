@@ -37,7 +37,7 @@ const authController = {
       });
 
       if (!user) {
-        res.status(404).json('Wrong username!');
+        return res.status(404).json('Wrong username!');
       }
 
       const validPassword = await bcrypt.compare(
@@ -50,19 +50,36 @@ const authController = {
       }
 
       if (user && validPassword) {
-        const accessToken = jwt.sign(
-          {
-            id: user.id,
-            isAdmin: user.isAdmin,
-          },
-          process.env.JWT_ACCESS_KEY,
-          { expiresIn: '2h' }
-        );
-        res.status(200).json({ user, accessToken });
+        const accessToken = authController.generateAccessToken(user);
+
+        const refreshToken =
+          authController.generateRefreshToken(user);
+
+        const { password, ...others } = user._doc;
+        res
+          .status(200)
+          .json({ ...others, accessToken, refreshToken });
       }
     } catch (error) {
       res.status(500).json(error);
     }
+  },
+
+  //generateAccessToken
+  generateAccessToken: (user) => {
+    return jwt.sign(
+      { id: user.id, isAdmin: user.isAdmin },
+      process.env.JWT_ACCESS_KEY,
+      { expiresIn: '2h' }
+    );
+  },
+  //generateRefreshToken
+  generateRefreshToken: (user) => {
+    return jwt.sign(
+      { id: user.id, isAdmin: user.isAdmin },
+      process.env.JWT_REFRESH_KEY,
+      { expiresIn: '365d' }
+    );
   },
 };
 
