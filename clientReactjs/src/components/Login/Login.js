@@ -1,12 +1,12 @@
-import "./login.css";
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { loginUser } from "../../redux/authRequest";
+import './login.css';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../../store/authRequest';
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -37,9 +37,12 @@ const Login = () => {
         />
         <button type="submit"> Continue </button>
       </form>
-      <div className="login-register"> Don't have an account yet? </div>
+      <div className="login-register">
+        {' '}
+        Don't have an account yet?{' '}
+      </div>
       <Link className="login-register-link" to="/register">
-        Register one for free{" "}
+        Register one for free{' '}
       </Link>
     </section>
   );
